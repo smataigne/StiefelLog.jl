@@ -32,5 +32,7 @@ for k ∈[0,2,4]
     ylabel!(L"(\Vert C_k\Vert_{\mathrm{F}}+\Vert\widehat{A}_k-A_k\Vert_{\mathrm{F}})^*")
     xlabel!("Iteration")
     display(P)
-    savefig(P,"./figures/figure_5_generalalgorithm_subiter_"*string(k)*".pdf")
+    script_dir = @__DIR__
+    path = joinpath(script_dir, "./figures/figure_5_generalalgorithm_subiter_"*string(k)*".pdf")
+    savefig(P, path)
 end

@@ -160,6 +160,14 @@ end
 end
 
 @views function logβ(S₁::StiefelVector{T, METRIC}, S₂::StiefelVector{T, METRIC}, β::Real, max_sub_iter::Integer) where {T,METRIC}
+    """
+    Computes the Riemannian logarithm Log(S₁,S₂) on St(n,p) equipped the β-metric.
+    Performs pseudo-backward iterations of Algorithm 4.1 (paper).
+    Input: S₁,S₂ two vectors on St(n,p), β > 0 the metric parameter 
+    and  max_sub_iter the number of sub-iteration of Algorithm  4.2 (function subproblem) to peform.
+    Output: The Riemannian logarithm Δ = S₁ * A + Q * B , Q, the residuals and the number of iterations performed.  
+    NB: max_sub_iter=0 corresponds to the pure forward iteration.
+    """
     #parameters
     ϵ = 1e-12; max_iter = 100; iter = 0
     p = size(S₁, 2)
@@ -210,6 +218,13 @@ end
 end
 
 @views function logβmomentum(S₁::StiefelVector{T, METRIC}, S₂::StiefelVector{T, METRIC}, β::Real) where {T,METRIC}
+    """
+    Computes the Riemannian logarithm Log(S₁,S₂) on St(n,p) equipped the β-metric.
+    Performs accelerated forward iterations of Algorithm 4.1 (paper).
+    Input: S₁,S₂ two vectors on St(n,p), β > 0 the metric parameter 
+    and  max_sub_iter the number of sub-iteration of Algorithm  4.2 (function subproblem) to peform.
+    Output: The Riemannian logarithm Δ = S₁ * A + Q * B , Q, norms (the residuals) and the number of iterations performed.  
+    """
     #parameters
     ϵ = 1e-12; max_iter = 100; iter = 0
     n, p = size(S₁)
@@ -269,6 +284,16 @@ end
 
 
 @views function pshooting(S₁::StiefelVector{T, METRIC}, S₂::StiefelVector{T, METRIC}, β::Real, m::Integer) where {T,METRIC}
+    """
+    Computes the Riemannian logarithm Log(S₁,S₂) on St(n,p) equipped the β-metric.
+    Implementation of Algorithm 2 from 
+    Zimmermann, R., H ̈uper, K.: Computing the Riemannian Logarithm on the Stiefel Mani-
+    fold: Metrics, Methods, and Performance. SIAM Journal on Matrix Analysis and Appli-
+    cations 43(2), 953–980 (2022).
+    Input: S₁,S₂ two vectors on St(n,p), β > 0 the metric parameter 
+    and  m the discretization parameter.
+    Output: The Riemannian logarithm Δ = S₁ * A + Q * B , Q and the number of iterations performed.  
+    """
     t = LinRange(0, 1, m)
     max_iter = 1000
     n, p = size(S₁)
@@ -353,80 +378,4 @@ end
         iter +=1 
     end
     return S₁.U.Q * A + Q * R, Q, iter
-end
-
-@views function dummypshooting(S₁::StiefelVector{T, METRIC}, S₂::StiefelVector{T, METRIC}, β::Real, m::Integer) where {T,METRIC}
-    t = LinRange(0, 1, m)
-    max_iter = 1000
-    n, p = size(S₁)
-    ϵ = 1e-12
-
-    #Pre-allocating memory for efficiency
-    M = zeros(T, p, p)
-    V = similar(M, n, p)
-    A = similar(M, p, p)
-    R = similar(M, p, p)
-    Aˢ= similar(M, p, p)
-    Rˢ= similar(M, p, p)
-    R = similar(M, p, p)
-    S = similar(M, 2p, 2p)
-    Sym1 = similar(M, p, p)
-    Sym2 = similar(M, p, p)
-    temp = similar(M, 2p, 2p)
-    MN = similar(M, 2p, p, m)
-    #End of memory pre-allocation
-
-    mul!(M, S₁.U.Q', S₂.U.Q)
-    V .= S₂.U.Q
-    mul!(V, S₁.U.Q, M,-1, 1)
-    Q, N = gramschmidt!(V)
-    ν = sqrt(norm(M-I)^2 + norm(N)^2) #||U-̃U ||_F
-    A .= (M-M')/2; R .= N
-    γ = ν / sqrt(β * norm(A)^2+ norm(N)^2)
-    A .*= γ ; R .*= γ
-    iter = 0
-    while ν > ϵ && iter<max_iter
-        
-        temp .= 0
-        temp[1:p, 1:p] .= A
-        temp[1:p, 1:p] .*= 2β
-        temp[p+1:end, 1:p] .= R
-        temp[1:p, p+1:end] .= -R'
-        S .= temp
-        for j ∈ 1:m
-            MN[:, :, j] = (exp(t[j]*S)[:,1:p])*exp(t[j]*(1-2β) * A)
-        end
-        Aˢ .= MN[1:p, :, m] ;  Aˢ.-= M
-        Rˢ .= MN[p+1:end, :, m] ; Rˢ.-= N
-        ν  = sqrt(norm(Aˢ)^2 + norm(Rˢ)^2)
-        for j ∈ m:-1:1
-            mul!(Sym2, MN[1:p, :, j]', Aˢ)
-            mul!(Sym2, MN[p+1:end, :, j]', Rˢ, 1, 1)
-            #take symmetric part S = S2 + S2' / 2
-            Sym1 .= Sym2
-            Sym1.+= Sym2'
-            Sym1 ./= 2
-            mul!(Aˢ, MN[1:p, :, j], Sym1, -1, 1)
-            mul!(Rˢ, MN[p+1:end, :, j], Sym1, -1, 1)
-            l = sqrt(norm(Aˢ)^2+norm(Rˢ)^2)
-            if l > ϵ
-                Aˢ .*= ν/l
-                Rˢ .*= ν/l
-            else
-                Aˢ .= 0 ; Rˢ .= 0
-            end
-        end
-        A .-= Aˢ
-        R .-= Rˢ 
-        iter +=1 
-    end
-    return S₁.U.Q * A + Q * R, Q, iter
-end
-
-@views function Base.log(S₁::StiefelVector{T, METRIC}, S₂::StiefelVector{T, METRIC}) where {T,METRIC}
-    if iszero(METRIC)
-        return path_straightening(S₁.U, S₂.U) 
-    else
-        return logAlg4(S₁,S₂)
-    end
 end

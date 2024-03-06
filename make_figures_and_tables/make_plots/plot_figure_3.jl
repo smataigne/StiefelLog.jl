@@ -2,7 +2,7 @@ using LinearAlgebra, SkewLinearAlgebra, MatrixEquations, Plots, LaTeXStrings, Co
 import .Manifold as m
 
 n = 120; p = 50
-δ = 0.05
+δ = 0.1
 U₁ = m.randorthonormal(Float64, n, p)
 U₂ = m.Orthonormal(exp(skewhermitian!(randn(n,n)*δ))*U₁.Q, false)#m.randorthonormal(Float64, n, p)
 display(norm(U₁-U₂)/sqrt(p)/2)

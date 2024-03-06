@@ -34,7 +34,9 @@ for j ∈ eachindex(betas)
 end
 xlabel!("Number of sub-iterations")
 ylabel!("Running time % w.r.t PF")
-savefig(P, "./figures/figure_4_subiterationtest.pdf")
+script_dir = @__DIR__
+path = joinpath(script_dir, "./figures/figure_4_subiterationtest.pdf")
+savefig(P, path)
 display(P)
 
 

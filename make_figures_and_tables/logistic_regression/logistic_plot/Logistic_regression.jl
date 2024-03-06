@@ -43,7 +43,9 @@ for j∈eachindex(ps)
         if β > 0.5
             θ, norms, iter = AccGradientMethod(θ₀, X, Y[:, i], L, max_iter)
             s = 1 ./(1 .+ exp.(-θ[1] .- θ[2] .* t))
-            plot!(t, s, label = L"\beta="*string(β), linewidth = 2, linestyle=styles[i], color=colors[i])
+            R2 = 1 - sum((Y[:, i]  - 1 ./(1 .+ exp.(-θ[1] .- θ[2] .* X[:, 2]))).^2)/sum((Y[:, i] .- mean(Y[:, i])).^2)
+            display("R2 for (β, p)=(" * string(β) * ","*string(p) * ") : " * string(round(R2, digits =2)))
+            plot!(t, s, label = L"\beta="*string(β), linewidth = 2, linestyle = styles[i], color = colors[i])
             h = 1
             while h<101 && s[h]>0.9
                 h+=1
@@ -53,7 +55,7 @@ for j∈eachindex(ps)
             radius[j,i] = t[h]
         end
     end
-    figure_path = joinpath(script_dir,figures_dir, "success_rate_st"*string(p)*"_1000_new.pdf")
+    figure_path = joinpath(script_dir,figures_dir, "success_rate_st" * string(p) * "_1000_new.pdf")
     xlabel!(L"\Vert \mathbf{U}-\mathbf{\widetilde{U}} \ \Vert_\mathrm{F} / 2\sqrt{p}")
     title!("Probability of success on St("*string(n)*","*string(p)*")")
     savefig(P2, figure_path)
