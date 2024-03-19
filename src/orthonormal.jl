@@ -1,3 +1,7 @@
+"""
+This file contains a structure to deal with orthogonal matrices.
+"""
+
 struct Orthonormal{T<:Number, X<:AbstractMatrix{<:T}} <: AbstractMatrix{T}
     Q::X
     function Orthonormal{T, X}(Q) where {T, X}

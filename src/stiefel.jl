@@ -1,3 +1,6 @@
+"""
+This file contains a structure to deal with the Stiefel manifold.
+"""
 
 mutable struct StiefelVector{T<:Number, METRIC, X<:Orthonormal{<:T}}
     U::X 

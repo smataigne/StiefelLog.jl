@@ -45,7 +45,7 @@ for j∈eachindex(ps)
             s = 1 ./(1 .+ exp.(-θ[1] .- θ[2] .* t))
             R2 = 1 - sum((Y[:, i]  - 1 ./(1 .+ exp.(-θ[1] .- θ[2] .* X[:, 2]))).^2)/sum((Y[:, i] .- mean(Y[:, i])).^2)
             display("R2 for (β, p)=(" * string(β) * ","*string(p) * ") : " * string(round(R2, digits =2)))
-            plot!(t, s, label = L"\beta="*string(β), linewidth = 2, linestyle = styles[i], color = colors[i])
+            plot!(t, s, label = L"\beta="*string(β), linewidth = 1, linestyle = styles[i], color = colors[i])
             h = 1
             while h<101 && s[h]>0.9
                 h+=1
@@ -56,7 +56,7 @@ for j∈eachindex(ps)
         end
     end
     figure_path = joinpath(script_dir,figures_dir, "success_rate_st" * string(p) * "_1000_new.pdf")
-    xlabel!(L"\Vert \mathbf{U}-\mathbf{\widetilde{U}} \ \Vert_\mathrm{F} / 2\sqrt{p}")
+    xlabel!(L"\Vert U-\widetilde{U} \ \Vert_\mathrm{F} / 2\sqrt{p}")
     title!("Probability of success on St("*string(n)*","*string(p)*")")
     savefig(P2, figure_path)
     display(P2)
@@ -71,15 +71,16 @@ for i ∈ eachindex(betas)
     β = betas[i]
     if β > 0.5
         global radius
-        plot!(log2.(ps), radius[:,i], color=colors[i], linestyle = styles[i], label = L"\beta="*string(β),linewidth=2)
+        plot!(log2.(ps), radius[:,i], color=colors[i], linestyle = styles[i], label = L"\beta="*string(β),linewidth=1)
     end
 end
 
 ylabel!(L"r/2\sqrt{p}")
 xlabel!(L"\log_2(p)")
 figure_path = joinpath(script_dir,figures_dir, "success_rates_new.pdf")
-display(P)
 savefig(P, figure_path)
+display(P)
+
 
 
 

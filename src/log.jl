@@ -87,9 +87,9 @@ end
     return D
 end
 
-@views function estimator(V::AbstractMatrix, β::Real)
+@views function initial_approximant(V::AbstractMatrix, β::Real)
     """
-    Estimates the initial approxiamtion Â₀ using the BCH series expansion. (See Section 4.5 of the paper)
+    Estimates the initial approximation Â₀ using the BCH series expansion. (See Section 4.5 of the paper)
     Input: V an orthogonal matrix of SO(2p), β the parameter of the metric.
     Output: the initial p×p skew-symmetric approximation Â₀ of A₀.
     """
@@ -102,7 +102,7 @@ end
     return lyapc(S, -X[1:p, 1:p])
 end
 
-@views function initialize(S₁::StiefelVector{T, METRIC}, S₂::StiefelVector{T, METRIC}) where {T, METRIC}
+@views function initial_basis(S₁::StiefelVector{T, METRIC}, S₂::StiefelVector{T, METRIC}) where {T, METRIC}
     """
     Given two points on the Stiefel manifold S₁,S₂ ∈ St(n,p). Compute the initial matrix V from Algorithms  3.1 and 4.1.
     Input: S₁,S₂ ∈ St(n,p) (type StiefelVector).
@@ -123,7 +123,7 @@ end
     for i ∈ 1:p
         #Complete basis Q if not full column rank
         if norm(Q[:, i]) < 0.5 #0.5 to avoid potential numerical issues of <1
-            Q[:, i] .= randn(n)
+            Q[:, i] .= randn(n)  
             lowrank = true
         end
     end
@@ -135,7 +135,7 @@ end
         orthogonalize!(Q)
     end
     mul!(V[p+1:end, 1:p] , Q', S₂.U.Q)
-    orthogonalize!(V) #security orthogonalization
+    orthogonalize!(V) #security orthogonalization, theoretically not needed
     S = svd(V[p+1:end, p+1:end])
 
     #= Initialization suggested by Zimmermann 2017
@@ -153,7 +153,8 @@ end
     mul!(V[p+1:end, :], S.U', temp2')
     Q₂ = copy(Q)
     mul!(Q, Q₂, S.U)
-    if det(V) < 0        #Using logabsdet may be more stable to ensure V ∈ SO(2p)
+    
+    if logabsdet(V)[2] < 0        #Using logabsdet may be more stable than det to ensure V ∈ SO(2p)
         V[:, end] .*= -1
     end
     return V, Q
@@ -173,7 +174,7 @@ end
     p = size(S₁, 2)
     τ = 2β - 1
     norms = zeros(max_iter, 2)
-    V, Q = initialize(S₁, S₂)
+    V, Q = initial_basis(S₁, S₂)
 
     #Pre-allocating memory
     temp = similar(V, 2p, p)
@@ -186,7 +187,7 @@ end
     E = similar(V, p, p)
     #End memory pre-allocation
     
-    Ahat = estimator(V, β)
+    Ahat = initial_approximant(V, β)
     while iter < max_iter
         E = exp(skewhermitian!(τ * Ahat))
         mul!(Vₐ[:,1:p], V[:,1:p], E)
@@ -230,7 +231,7 @@ end
     n, p = size(S₁)
     τ = 2β - 1
     norms = zeros(max_iter, 2)
-    V, Q = initialize(S₁, S₂)
+    V, Q = initial_basis(S₁, S₂)
 
     #Pre-allocating memory
     temp = similar(V, 2p, p)
@@ -243,8 +244,7 @@ end
     E = similar(V, p, p)
     #End memory pre-allocation
 
-    Ahat = estimator(V, β)
-    δₒₒ, δₒ, δ = 1, 1, 1
+    Ahat = initial_approximant(V, β)
     while iter < max_iter
         E = exp(τ * Ahat)
         mul!(Vₐ[:,1:p], V[:,1:p], E)
@@ -287,7 +287,7 @@ end
     """
     Computes the Riemannian logarithm Log(S₁,S₂) on St(n,p) equipped the β-metric.
     Implementation of Algorithm 2 from 
-    Zimmermann, R., H ̈uper, K.: Computing the Riemannian Logarithm on the Stiefel Mani-
+    Zimmermann, R., Hüper, K.: Computing the Riemannian Logarithm on the Stiefel Mani-
     fold: Metrics, Methods, and Performance. SIAM Journal on Matrix Analysis and Appli-
     cations 43(2), 953–980 (2022).
     Input: S₁,S₂ two vectors on St(n,p), β > 0 the metric parameter 
@@ -321,7 +321,7 @@ end
 
     mul!(M, S₁.U.Q', S₂.U.Q)
     V .= S₂.U.Q
-    mul!(V, S₁.U.Q, M,-1, 1)
+    mul!(V, S₁.U.Q, M, -1, 1)
     Q = orthogonalize!(V)
     mul!(N, Q', S₂.U.Q)
     ν = sqrt(β * norm(M-I)^2 + norm(N)^2)

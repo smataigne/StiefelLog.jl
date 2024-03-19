@@ -1,3 +1,7 @@
+"""
+This file contains routines for computing the Riemannian exponenetial, not directly related to the article.
+"""
+
 @views function expβ(S::StiefelVector{T, METRIC}, Δ::TangentVector{T, METRIC}) where {T, METRIC}
     
     Δ₂ = gettangent(Δ, S)
