@@ -1,9 +1,13 @@
 # StiefelLog.jl
 This repository is associated with the publication ["Mataigne S., Zimmermann R., Miolane N., An efficient algorithm to compute the Riemannian logarithm on the Stiefel manifold for a family of Riemannian metrics, 2024"](https://arxiv.org/abs/2403.11730)
 
+## Installation
 To use this repository, the user must have a Julia installation and have installed the following packages for computations: `LinearAlgebra`, `SkewLinearAlgebra`, `MatrixEquations`. And also the following packages to make the plots: `Plots`, `Colors`, `LaTeXStrings`, `XSLX`, `Distributions`, `BenchmarkTools`.
 
-It is made of three principal folders.
+
+## Use
+
+This repository contains three principal folders.
 * The folder `src` contains the files:
   * `Manifold.jl` that must be run in local before any use of the other functions. If you want to use the functions implemented in `src`, simply add `ìmport .Manifold as mfd` to the top of your personal file.
   * `log.jl` contains an implementation of the routines introduced in the paper, notably Algorithm 3.1, 4.1 and 4.2 in their different versions (pure forward, pseudo-backward and accelerated forward).
@@ -16,4 +20,17 @@ It is made of three principal folders.
   * The folder `logistic_regression` contains `Logistic_data.jl` to create the xlsx data files in the folder `logistic_data`. In `Logistic_data.jl`, you can choose $n$, $p$ and the number `N`of samples.  `Logistic_regression.jl` creates the figures in the folder `logistic_figures`.
   * The folder `make_plots` contains the files to create the figures 2 to 5 in the folder `figures`.
 * The folder `bin`can be ignored.
+
+## Bibtex
+If you use the content of this repository, please cite
+```
+@misc{mataigne2024efficient,
+      title={An efficient algorithm for the Riemannian logarithm on the Stiefel manifold for a family of Riemannian metrics}, 
+      author={Simon Mataigne and Ralf Zimmermann and Nina Miolane},
+      year={2024},
+      eprint={2403.11730},
+      archivePrefix={arXiv},
+      primaryClass={math.NA}
+}
+```
       
