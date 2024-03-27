@@ -1,8 +1,11 @@
 # StiefelLog.jl
 This repository is associated with the publication ["Mataigne S., Zimmermann R., Miolane N., An efficient algorithm to compute the Riemannian logarithm on the Stiefel manifold for a family of Riemannian metrics, 2024"](https://arxiv.org/abs/2403.11730)
 
-## Installation
-To use this repository, the user must have a Julia installation and have installed the following packages for computations: `LinearAlgebra`, `SkewLinearAlgebra`, `MatrixEquations`. And also the following packages to make the plots: `Plots`, `Colors`, `LaTeXStrings`, `XSLX`, `Distributions`, `BenchmarkTools`.
+## Requirements
+To use this repository, the user must have a Julia installation and have installed the following packages for computations: `LinearAlgebra`, `SkewLinearAlgebra`, `MatrixEquations`. And also the following packages to make the plots: `Plots`, `Colors`, `LaTeXStrings`, `XSLX`, `Distributions`, `BenchmarkTools`. These packages are easily obtained from the package installation environment as follows. In Julia REPL, press `]` to access the installation environment and for each package, do
+```julia
+(@v1.6) pkg> add Name_of_Package
+```
 
 
 ## Use
