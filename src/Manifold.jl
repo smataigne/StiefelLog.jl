@@ -25,6 +25,5 @@ include("stiefel.jl")
 include("exp.jl")
 include("log.jl")
 include("pathstraightening.jl")
-
 end
 

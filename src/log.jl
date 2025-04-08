@@ -198,8 +198,8 @@ end
         B = logV[p+1:end,1:p]
         C = logV[p + 1:end, p + 1:end]
 
-        norms[iter+1, :] = [abs(1-2β)*norm(A-Ahat), norm(C)]
-        if (norms[iter+1,1]+norms[iter+1,2])< max(ϵ * max(norms[1,1]+norms[1,2],1), 2*p*eps(T))
+        norms[iter+1, :] = [abs(1-2β) * norm(A-Ahat), norm(C)]
+        if (norms[iter+1,1] + norms[iter+1,2]) < max(ϵ * max(norms[1,1]+norms[1,2],1), 2p * eps(T))
             iter += 1
             break
         end 
@@ -271,11 +271,10 @@ end
             E2 = exp(τ * A)
             # Use Vₐ as temp memory
             # Ahat = A + τ *  E2*(A - Ahat)*E2' 
-            Vₐ[1:p, 1:p] .= A - Ahat
+            Vₐ[1:p, 1:p] .= τ * (A - Ahat) #- τ^2 * (A * Ahat - Ahat * A)/2
             mul!(Vₐ[p+1:end, 1:p], Vₐ[1:p, 1:p], E2')
             mul!(Ahat, E2, Vₐ[p+1:end, 1:p])
-            Ahat .*= τ
-            Ahat .+= A
+            Ahat .+= A 
         end
         iter+=1
     end
