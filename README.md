@@ -1,5 +1,5 @@
 # StiefelLog.jl
-This repository is associated with the publication ["Mataigne S., Zimmermann R., Miolane N., An efficient algorithm to compute the Riemannian logarithm on the Stiefel manifold for a family of Riemannian metrics, 2024"](https://arxiv.org/abs/2403.11730)
+This repository is associated with the publication ["Mataigne S., Zimmermann R., Miolane N., An Efficient Algorithm for the Riemannian Logarithm on the Stiefel Manifold for a Family of Riemannian Metrics, SIAM Journal on Matrix Analysis and Applications, 46(2), 879-905, 2025"](https://epubs.siam.org/doi/10.1137/24M1647801)
 
 ## Requirements
 To use this repository, the user must have a Julia installation and have installed the following packages for computations: `LinearAlgebra`, `SkewLinearAlgebra`, `MatrixEquations`. And also the following packages to make the plots: `Plots`, `Colors`, `LaTeXStrings`, `XSLX`, `Distributions`, `BenchmarkTools`. These packages are easily obtained from the package installation environment as follows. In Julia REPL, press `]` to access the installation environment and for each package, do
@@ -27,13 +27,16 @@ This repository contains three principal folders.
 ## Bibtex
 If you use the content of this repository, please cite
 ```
-@misc{mataigne2024efficient,
-      title={An efficient algorithm for the Riemannian logarithm on the Stiefel manifold for a family of Riemannian metrics}, 
-      author={Simon Mataigne and Ralf Zimmermann and Nina Miolane},
-      year={2024},
-      eprint={2403.11730},
-      archivePrefix={arXiv},
-      primaryClass={math.NA}
-}
+@article{doi:10.1137/24M1647801,
+author = {Mataigne, Simon and Zimmermann, Ralf and Miolane, Nina},
+title = {An Efficient Algorithm for the Riemannian Logarithm on the Stiefel Manifold for a Family of Riemannian Metrics},
+journal = {SIAM Journal on Matrix Analysis and Applications},
+volume = {46},
+number = {2},
+pages = {879-905},
+year = {2025},
+doi = {10.1137/24M1647801},
+URL = {https://doi.org/10.1137/24M1647801},
+eprint = {https://doi.org/10.1137/24M1647801}
 ```
       
